@@ -6,6 +6,9 @@ source "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/x-lib.sh"
 ask "endpoint" http://localhost:8000
 echo "$ASK_BUF" > "$ENDPOINT_URL_"
 
+ask "usr.href" /usr/62cdf0b3-e75d-41c2-be15-0c1d4aab28fd
+echo "$ASK_BUF" > "$USR_HREF_"
+
 ask "usr_key.href" /usr_key/2d5c7fc1-a9dd-4b94-a01a-909f083b1ccb
 echo "$ASK_BUF" > "$USR_KEY_HREF_"
 #-------------------------------------------------------------------------------

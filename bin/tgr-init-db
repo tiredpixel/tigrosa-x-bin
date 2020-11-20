@@ -1,0 +1,12 @@
+#!/bin/bash -eu
+set -o pipefail
+
+source "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/x-lib.sh"
+
+rsa_key_pub=$(cat .tigrosa/pub.pem)
+#-------------------------------------------------------------------------------
+echo "INSERT INTO tgr.usr
+    (usr_id, rlm) VALUES ('${USR_HREF##*/}', 'Admin');"
+echo "INSERT INTO tgr.usr_key
+    (usr_key_id, usr_id, rsa_key_pub) VALUES ('${USR_KEY_HREF##*/}', '${USR_HREF##*/}', '$rsa_key_pub');"
+#-------------------------------------------------------------------------------
