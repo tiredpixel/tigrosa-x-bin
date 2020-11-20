@@ -1,0 +1,33 @@
+#!/bin/bash -eu
+set -o pipefail
+
+href_=${1:-}
+
+source "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/x-lib.sh"
+#-------------------------------------------------------------------------------
+if [ -z "$href_" ]; then
+    ask_opts "href" 0 \
+        "${ORG_HREF:-}" \
+        "${USR_HREF:-}"
+    href=$ASK_BUF
+else
+    href=$href_
+fi
+
+ask "locked" null
+locked=$ASK_BUF
+#-------------------------------------------------------------------------------
+j=$(cat <<-EOT
+	{
+	    "locked": $locked
+	}
+	EOT
+    )
+
+p=$(
+    curla -X PATCH -d "$j" "$ENDPOINT_URL$href"
+)
+echo "$p" | jq
+#-------------------------------------------------------------------------------
+curla "$ENDPOINT_URL$href" | jq
+#-------------------------------------------------------------------------------

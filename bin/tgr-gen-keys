@@ -1,0 +1,15 @@
+#!/bin/bash -eu
+set -o pipefail
+
+source "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/x-lib.sh"
+#-------------------------------------------------------------------------------
+if [ ! -s "$KEY_PRI_PEM" ] ; then
+    touch "$KEY_PRI_PEM"
+    chmod 600 "$KEY_PRI_PEM"
+    openssl genrsa -out "$KEY_PRI_PEM" 2048
+fi
+
+if [ ! -s "$KEY_PUB_PEM" ] ; then
+    openssl rsa -in "$KEY_PRI_PEM" -outform PEM -pubout -out "$KEY_PUB_PEM"
+fi
+#-------------------------------------------------------------------------------

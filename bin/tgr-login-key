@@ -1,0 +1,49 @@
+#!/bin/bash -eu
+set -o pipefail
+
+source "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/x-lib.sh"
+#-------------------------------------------------------------------------------
+test -s "$USR_HREF_" &&
+    curla -f "$ENDPOINT_URL$USR_HREF" | jq &&
+    exit
+#-------------------------------------------------------------------------------
+ask "ttl" 3600
+ttl=$ASK_BUF
+#-------------------------------------------------------------------------------
+# generate create session payload; beware of clock-drift
+cat > "$SES_JSON" <<-EOT
+	{
+	  "t_ins": "$(date -Iseconds)",
+	  "ttl": $ttl
+	}
+	EOT
+jq < "$SES_JSON"
+
+# use RSA key to sign a SHA-256 hash of the payload
+tr -d '\n' < "$SES_JSON" |
+    openssl dgst -sha256 -sign "$KEY_PRI_PEM" |
+    base64 -w0 \
+    > "$SES_JSON_SIG"
+
+# POST payload to create session
+t=$(
+    curl -f -u "$USR_KEY_HREF:$(cat "$SES_JSON_SIG")" \
+        -X POST -d"@$SES_JSON" "$ENDPOINT_URL/usr_ses"
+)
+echo "$t" | jq
+
+# generate netrc file
+touch "$NETRC"
+chmod 600 "$NETRC"
+cat > "$NETRC" <<-EOT
+	machine $(echo "$ENDPOINT_URL" |
+        sed -e 's|^[^/]*//||' -e 's|:[0-9]*/*.*$||')
+	login $(echo "$t" | jq -r '.href')
+	password $(echo "$t" | jq -r '.token')
+	EOT
+
+echo "$t" | jq -r '.usr.href' > "$USR_HREF_"
+reload_vars
+#-------------------------------------------------------------------------------
+"$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/tgr-read" "$USR_HREF"
+#-------------------------------------------------------------------------------

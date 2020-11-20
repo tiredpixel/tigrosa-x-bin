@@ -1,0 +1,44 @@
+#!/bin/bash -eu
+set -o pipefail
+
+source "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/x-lib.sh"
+#-------------------------------------------------------------------------------
+test -s "$USR_HREF_" &&
+    curla -f "$ENDPOINT_URL$USR_HREF" | jq &&
+    exit
+#-------------------------------------------------------------------------------
+ask "pass" ""
+pass=$ASK_BUF
+
+ask "ttl" 3600
+ttl=$ASK_BUF
+#-------------------------------------------------------------------------------
+# generate create session payload
+j=$(cat <<-EOT
+	{
+	  "ttl": $ttl
+	}
+	EOT
+    )
+
+# POST payload to create session
+t=$(
+    curl -f -u "$USR_HREF:$pass" -X POST -d "$j" "$ENDPOINT_URL/usr_ses"
+)
+echo "$t" | jq
+
+# generate netrc file
+touch "$NETRC"
+chmod 600 "$NETRC"
+cat > "$NETRC" <<-EOT
+	machine $(echo "$ENDPOINT_URL" |
+        sed -e 's|^[^/]*//||' -e 's|:[0-9]*/*.*$||')
+	login $(echo "$t" | jq -r '.href')
+	password $(echo "$t" | jq -r '.token')
+	EOT
+
+echo "$t" | jq -r '.usr.href' > "$USR_HREF_"
+reload_vars
+#-------------------------------------------------------------------------------
+"$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/tgr-read" "$USR_HREF"
+#-------------------------------------------------------------------------------

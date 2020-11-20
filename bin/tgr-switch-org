@@ -1,0 +1,13 @@
+#!/bin/bash -eu
+set -o pipefail
+
+source "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/x-lib.sh"
+#-------------------------------------------------------------------------------
+orgs=($(find "$(dirname "$DIR$ORG_HREF")" \
+    -mindepth 1 -maxdepth 1 -type d -printf '/org/%f\n'))
+ask_opts "org.href" 0 "${orgs[@]}"
+echo "$ASK_BUF" > "$ORG_HREF_"
+reload_vars
+#-------------------------------------------------------------------------------
+"$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/tgr-read" "$ORG_HREF"
+#-------------------------------------------------------------------------------

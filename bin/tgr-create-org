@@ -1,0 +1,31 @@
+#!/bin/bash -eu
+set -o pipefail
+
+source "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/x-lib.sh"
+#-------------------------------------------------------------------------------
+j=$(cat <<-EOT
+	{
+	}
+	EOT
+    )
+
+p=$(
+    curla -X POST -d "$j" "$ENDPOINT_URL/org"
+)
+echo "$p" | jq
+echo "$p" | jq -r '.href' | grep -v 'null' >> "$ORG_HREF_"
+reload_vars
+#-------------------------------------------------------------------------------
+j=$(cat <<-EOT
+	{
+	}
+	EOT
+    )
+
+p=$(
+    curla -X PUT -d "$j" "$ENDPOINT_URL$ORG_HREF$USR_HREF"
+)
+echo "$p" | jq
+#-------------------------------------------------------------------------------
+mkdir -p "$DIR$ORG_HREF"
+#-------------------------------------------------------------------------------
