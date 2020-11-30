@@ -4,6 +4,13 @@ set -o pipefail
 source "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/x-lib.sh"
 
 file_ext=.yml
+sig_ext=.sha256.sig.base64
+#-------------------------------------------------------------------------------
+function clean() {
+    rm -rf "$tmp"
+}
+
+trap clean EXIT
 #-------------------------------------------------------------------------------
 ask "id.name" "Example Ltd"
 id_name=$ASK_BUF
@@ -39,7 +46,20 @@ y=$(cat <<-EOT
 echo "$y"
 #-------------------------------------------------------------------------------
 ask "file [$file_ext]" license
-file=$ASK_BUF
+file_=$ASK_BUF
+
+file="$file_$file_ext"
 #-------------------------------------------------------------------------------
-echo "$y" > "$file$file_ext"
+tmp=$(mktemp -d)
+
+echo "$y" > "$tmp/$file"
+
+# use RSA key to sign a SHA-256 hash of the payload
+tr -d '\n' < "$tmp/$file" |
+    openssl dgst -sha256 -sign "$KEY_PRI_PEM" |
+    base64 -w0 \
+    > "$tmp/$file$sig_ext"
+
+echo "$y" > "$file"
+echo "# $(cat "$tmp/$file$sig_ext")" >> "$file"
 #-------------------------------------------------------------------------------
