@@ -11,8 +11,17 @@ id_name=$ASK_BUF
 ask "id.country" "GB"
 id_country=$ASK_BUF
 
-ask "id.number" "00000000"
-id_number=$ASK_BUF
+ask "id.number" null
+id_number_=$ASK_BUF
+
+case $id_number_ in
+    null)
+        id_number=null
+        ;;
+    *)
+        id_number="\"$id_number_\""
+        ;;
+esac
 
 ask "tmp.lim" 123
 tmp_lim=$ASK_BUF
@@ -21,7 +30,7 @@ y=$(cat <<-EOT
 	id:
 	  name: "$id_name"
 	  country: "$id_country"
-	  number: "$id_number"
+	  number: $id_number
 	tmp:
 	  lim: $tmp_lim
 	EOT
