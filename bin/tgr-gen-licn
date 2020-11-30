@@ -5,22 +5,31 @@ source "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/x-lib.sh"
 
 file_ext=.yml
 #-------------------------------------------------------------------------------
-ask "tmp.a" "A"
-tmp_a=$ASK_BUF
+ask "id.name" "Example Ltd"
+id_name=$ASK_BUF
 
-ask "tmp.b" 123
-tmp_b=$ASK_BUF
+ask "id.country" "GB"
+id_country=$ASK_BUF
+
+ask "id.number" "00000000"
+id_number=$ASK_BUF
+
+ask "tmp.lim" 123
+tmp_lim=$ASK_BUF
 #-------------------------------------------------------------------------------
 y=$(cat <<-EOT
+	id:
+	  name: "$id_name"
+	  country: "$id_country"
+	  number: "$id_number"
 	tmp:
-	  a: "$tmp_a"
-	  b: $tmp_b
+	  lim: $tmp_lim
 	EOT
     )
 #-------------------------------------------------------------------------------
 echo "$y"
 #-------------------------------------------------------------------------------
-ask "file [$file_ext]" conf
+ask "file [$file_ext]" licn
 file=$ASK_BUF
 #-------------------------------------------------------------------------------
 echo "$y" > "$file$file_ext"
