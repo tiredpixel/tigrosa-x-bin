@@ -30,23 +30,22 @@ case $id_number_ in
         ;;
 esac
 
-ask "time.beg" "$(date -Iseconds)"
-time_beg=$(date -Iseconds -d "$ASK_BUF")
+ask "t.ins" "$(date -Iseconds)"
+t_ins=$(date -Iseconds -d "$ASK_BUF")
 
-ask "time.end_" "1 day"
-time_end_=$ASK_BUF
+ask "t.exp_" "1 day"
+t_exp_=$ASK_BUF
 
-ask "time.end" "$(date -Iseconds -d "$time_beg $time_end_")"
-time_end=$(date -Iseconds -d "$ASK_BUF")
+ask "t.exp" "$(date -Iseconds -d "$t_ins $t_exp_")"
+t_exp=$(date -Iseconds -d "$ASK_BUF")
 #-------------------------------------------------------------------------------
 y=$(cat <<-EOT
 	id:
 	  name: "$id_name"
 	  country: "$id_country"
 	  number: $id_number
-	time:
-	  beg: "$time_beg"
-	  end: "$time_end"
+	t_ins: "$t_ins"
+	t_exp: "$t_exp"
 	EOT
     )
 #-------------------------------------------------------------------------------
