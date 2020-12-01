@@ -55,7 +55,7 @@ tmp=$(mktemp -d)
 echo "$y" > "$tmp/$file"
 
 # use RSA key to sign a SHA-256 hash of the payload
-tr -d '\n' < "$tmp/$file" |
+perl -pe 'chomp if eof' < "$tmp/$file" |
     openssl dgst -sha256 -sign "$KEY_PRI_PEM" |
     base64 -w0 \
     > "$tmp/$file$sig_ext"
