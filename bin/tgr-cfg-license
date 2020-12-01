@@ -30,16 +30,23 @@ case $id_number_ in
         ;;
 esac
 
-ask "tmp.lim" 123
-tmp_lim=$ASK_BUF
+ask "time.beg" "$(date -Iseconds)"
+time_beg=$(date -Iseconds -d "$ASK_BUF")
+
+ask "time.end_" "1 day"
+time_end_=$ASK_BUF
+
+ask "time.end" "$(date -Iseconds -d "$time_beg $time_end_")"
+time_end=$(date -Iseconds -d "$ASK_BUF")
 #-------------------------------------------------------------------------------
 y=$(cat <<-EOT
 	id:
 	  name: "$id_name"
 	  country: "$id_country"
 	  number: $id_number
-	tmp:
-	  lim: $tmp_lim
+	time:
+	  beg: "$time_beg"
+	  end: "$time_end"
 	EOT
     )
 #-------------------------------------------------------------------------------
