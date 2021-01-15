@@ -12,10 +12,10 @@ function clean() {
 
 trap clean EXIT
 #-------------------------------------------------------------------------------
-ask "id.name" "Example Ltd"
+ask "id.name" "(dev)"
 id_name=$ASK_BUF
 
-ask "id.country" "GB"
+ask "id.country" "XX"
 id_country=$ASK_BUF
 
 ask "id.number" null
