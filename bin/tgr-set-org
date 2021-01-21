@@ -3,7 +3,7 @@ set -o pipefail
 
 source "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/x-lib.sh"
 #-------------------------------------------------------------------------------
-ask "org.href" /org/0710c278-92a4-4af0-9ca8-c998f630112b
+ask "org.href" "/org/$(uuidgen)"
 echo "$ASK_BUF" > "$ORG_HREF_"
 reload_vars
 #-------------------------------------------------------------------------------
