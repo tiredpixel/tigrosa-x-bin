@@ -5,11 +5,6 @@
 Also see the [Isoxya x Bin Scripts](https://github.com/isoxya/isoxya-x-bin), a collection of scripts for [Isoxya](https://www.isoxya.com/) web crawler, building on top of these scripts.
 
 
-## Blessing
-
-May you find peace, and help others to do likewise.
-
-
 ## Contact
 
 [tiredpixel.com](https://www.tiredpixel.com/) · [tp@tiredpixel.com](mailto:tp@tiredpixel.com)
